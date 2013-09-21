@@ -17,17 +17,17 @@ function composte(options){
 	  back= t[t.length-1],
 	  wait= []
 
-	for(var i= t.length; t>= 0; --t){
-		t[i].push= t[i].push.bind(this)
+	for(var i= t.length-1; t>= 0; --t){
+		if(i == t.length-1){
+			t[i].push= t[i].push.bind(this)
+		}else{
+			var j= i+1
+			t[i].push= function(data){
+				t[j]._transform(data,typeof data == "string"?"utf8":null,nop)
+			}
+		}
 		t[i]._preCompFlush= t[i]._flush||done
 		t[i]._flush= _flushOut
-
-		var trans= t[i]._transform
-		if(i != 0)
-			t[i]._transform= function(data,enc,cb){
-				trans.call(t,data,enc,nop)
-			}
-
 	}
 	function _flushOut(cb){
 		t[refFlushPos]._preCompFlush(function(err){
